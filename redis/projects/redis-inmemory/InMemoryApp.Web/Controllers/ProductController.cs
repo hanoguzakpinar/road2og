@@ -1,3 +1,4 @@
+using InMemoryApp.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -26,6 +27,15 @@ namespace InMemoryApp.Web.Controllers
                 _memoryCache.Set<string>("zaman", DateTime.Now.ToString());
             }
 
+            //complex type caching
+            Product p = new Product()
+            {
+                Id = 1,
+                Name = "Kalem",
+                Price = 10
+            };
+            _memoryCache.Set<Product>("product:1", p);
+
             return View();
         }
 
@@ -34,6 +44,8 @@ namespace InMemoryApp.Web.Controllers
             ViewBag.Zaman = _memoryCache.Get<string>("zaman");
 
             ViewBag.Zaman2 = _memoryCache.Get<string>("callback");
+
+            ViewBag.Product = _memoryCache.Get<Product>("product:1");
 
             return View();
         }

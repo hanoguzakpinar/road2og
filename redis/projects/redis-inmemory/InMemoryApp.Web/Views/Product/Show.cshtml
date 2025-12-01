@@ -1,9 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Show Page";
+
+    Product product = ViewBag.Product as Product;
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>@ViewBag.Zaman</p>
     <p>@ViewBag.Zaman2</p>
+
+    <p> Product </p>
+    <p> Id: @product.Id </p>
+    <p> Name: @product.Name </p>
+    <p> Price: @product.Price </p>
 </div>
