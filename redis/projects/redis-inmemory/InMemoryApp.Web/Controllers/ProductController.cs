@@ -72,5 +72,25 @@ namespace InMemoryApp.Web.Controllers
 
             return View();
         }
+
+        public IActionResult Priority()
+        {
+            //Priority = Memory dolduğu zaman cachelerden hangilerinin öncelikle silineceğini belirler.
+            //Sıralama = Low, Normal, High, NeverRemove
+            if (_memoryCache.TryGetValue("zaman", out string? zamanCache))
+            {
+                MemoryCacheEntryOptions options = new MemoryCacheEntryOptions()
+                {
+                    AbsoluteExpiration = DateTime.Now.AddMinutes(1),
+                    SlidingExpiration = TimeSpan.FromSeconds(10),
+                    Priority = CacheItemPriority.High
+                };
+
+                //varolan bir cache keyine tekrar bir atama olursa sonuncu geçerli olur, eskisini ezer.
+                _memoryCache.Set<string>("zaman", DateTime.Now.ToString());
+            }
+
+            return View();
+        }
     }
 }
