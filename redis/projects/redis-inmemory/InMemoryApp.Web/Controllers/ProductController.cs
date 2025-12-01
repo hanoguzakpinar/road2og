@@ -33,6 +33,8 @@ namespace InMemoryApp.Web.Controllers
         {
             ViewBag.Zaman = _memoryCache.Get<string>("zaman");
 
+            ViewBag.Zaman2 = _memoryCache.Get<string>("callback");
+
             return View();
         }
 
@@ -77,18 +79,22 @@ namespace InMemoryApp.Web.Controllers
         {
             //Priority = Memory dolduğu zaman cachelerden hangilerinin öncelikle silineceğini belirler.
             //Sıralama = Low, Normal, High, NeverRemove
-            if (_memoryCache.TryGetValue("zaman", out string? zamanCache))
-            {
-                MemoryCacheEntryOptions options = new MemoryCacheEntryOptions()
-                {
-                    AbsoluteExpiration = DateTime.Now.AddMinutes(1),
-                    SlidingExpiration = TimeSpan.FromSeconds(10),
-                    Priority = CacheItemPriority.High
-                };
 
-                //varolan bir cache keyine tekrar bir atama olursa sonuncu geçerli olur, eskisini ezer.
-                _memoryCache.Set<string>("zaman", DateTime.Now.ToString());
-            }
+            MemoryCacheEntryOptions options = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpiration = DateTime.Now.AddSeconds(10),
+                //SlidingExpiration = TimeSpan.FromSeconds(10),
+                Priority = CacheItemPriority.High
+            };
+
+            //Cache elemanı silindiği anda otomatik tetiklenen bir event
+            options.RegisterPostEvictionCallback((key, value, reason, state) =>
+            {
+                _memoryCache.Set("callback", $"Key:{key} - Value:{value} - Reason:{reason} - State:{state}");
+            });
+
+            //varolan bir cache keyine tekrar bir atama olursa sonuncu geçerli olur, eskisini ezer.
+            _memoryCache.Set<string>("zaman", DateTime.Now.ToString(), options);
 
             return View();
         }
