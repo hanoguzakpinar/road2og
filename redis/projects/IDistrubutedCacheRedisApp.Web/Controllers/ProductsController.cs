@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -39,6 +40,24 @@ public class ProductsController : Controller
     {
         _distributedCache.Remove("name");
         return Content("Silindi.");
+    }
+
+    public ActionResult ImageCache()
+    {
+        string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/avatar.jpg");
+
+        var imgBytes = System.IO.File.ReadAllBytes(path);
+
+        _distributedCache.Set("resim", imgBytes);
+
+        return Content("kaydedildi.");
+    }
+
+    public IActionResult ImageShow()
+    {
+        var cachedData = _distributedCache.Get("resim");
+
+        return File(cachedData,"image/jpg");
     }
 }
 
