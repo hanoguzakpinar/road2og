@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "List Page";
+}
+@model List<string>
+
+<form method="post" asp-action="Add" enctype="application/x-www-form-urlencoded">
+    <input type="text" name="name">
+    <input type="submit" value="Kaydet">
+</form>
+
+<h1>Names:</h1>
+@foreach (string item in Model)
+{
+    <p>@item
+        <a asp-controller="List" asp-action="Remove" asp-route-name="@item">Sil</a>
+    </p>
+}
