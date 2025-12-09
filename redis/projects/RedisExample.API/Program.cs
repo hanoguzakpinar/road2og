@@ -1,25 +1,42 @@
 using Microsoft.EntityFrameworkCore;
 using RedisExample.API.Models;
+using RedisExample.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseInMemoryDatabase("myDatabase");
 });
 
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
-}
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}//inMemory db olduğu için bu satır yazılmak zorunda
+
+// Configure the HTTP request pipeline.
+app.UseSwagger();
+
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+    options.RoutePrefix = string.Empty;
+});
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
