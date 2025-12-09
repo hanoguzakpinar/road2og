@@ -1,0 +1,20 @@
+@model HashSet<SortedSetModel>
+
+@{
+    ViewData["Title"] = "Sorted Set Type Page";
+}
+
+<form method="post" asp-action="Add" enctype="application/x-www-form-urlencoded">
+    <input type="text" name="name">
+    <input type="number" name="score">
+    <input type="submit" value="Kaydet">
+</form>
+
+<h1>Names:</h1>
+@foreach (SortedSetModel item in Model)
+{
+    <p>@item.Name
+        @item.Score
+        <a asp-controller="SortedSetType" asp-action="Remove" asp-route-name="@item.Name">Sil</a>
+    </p>
+}
