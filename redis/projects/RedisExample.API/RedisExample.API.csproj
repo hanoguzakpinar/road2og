@@ -17,4 +17,8 @@
     <ProjectReference Include="..\RedisExample.Cache\RedisExample.Cache.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services/" />
+  </ItemGroup>
+
 </Project>
