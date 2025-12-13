@@ -3,10 +3,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI(options =>
+	{
+		// Swagger UI açılış sayfası olsun: https://localhost:<port>/
+		options.RoutePrefix = string.Empty;
+		// UI'nın çektiği OpenAPI JSON endpoint'i
+		options.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskApp.API v1");
+	});
+}
 
 app.UseHttpsRedirection();
 
