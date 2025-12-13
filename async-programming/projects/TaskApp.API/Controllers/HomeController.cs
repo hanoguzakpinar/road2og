@@ -19,5 +19,23 @@ namespace TaskApp.API.Controllers
 
             return Ok(data);
         }
+
+        //aşağıdaki metotta async ve await keywordleri yok.
+        // await olmadığında:
+        // “Bu iş başladı, ben handle’ını (Task) sana veriyorum; bittiğinde içinde sonuç olacak” diyorsun.
+        // Metot hemen döner; sonucu alma işi çağıran tarafa (caller) kalır: caller await eder, Result okur vs.
+        // Exception olursa, exception Task’ın içine yazılır; caller onu await edince (veya Result deyince) ortaya çıkar.
+
+        // await olsaydı:
+        // Metot içinde “iş bitsin, sonucunu alayım, sonra devam edeyim” diyorsun.
+        // Beklemek = thread’i bloklamak değil. Metot o noktada kontrolü runtime’a bırakıyor; iş bitince devam ediyor.
+        // Sonucu metot içinde kullanabildiğin için Ok(data) gibi bir cevap üretebiliyorsun.
+        [HttpGet("content")]
+        public Task<string> GetContent()
+        {
+            return new HttpClient().GetStringAsync("http://google.com");
+        }
+        // özet
+        // await kullanırsan metot iş bitene kadar asenkron biçimde durup sonucu burada işleyerek döner; await kullanmazsan metot beklemeden sadece devam eden işin Task’ını döner ve sonucu/hatasını çağıran taraf iş bitince alır.
     }
 }
