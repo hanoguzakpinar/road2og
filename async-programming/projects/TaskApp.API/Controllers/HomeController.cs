@@ -45,5 +45,9 @@ namespace TaskApp.API.Controllers
             var content = await GetContent();
             return Ok(content);
         }
+
+        //Bu örnekte await yazmıyoruz ama framework o Task<string>’i zaten bekleyip response’u öyle üretir.
+        [HttpGet("content-direct")]
+        public Task<string> GetContentDirect() => GetContent();
     }
 }
