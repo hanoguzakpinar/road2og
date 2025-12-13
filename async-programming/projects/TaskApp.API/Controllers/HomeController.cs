@@ -30,12 +30,20 @@ namespace TaskApp.API.Controllers
         // Metot içinde “iş bitsin, sonucunu alayım, sonra devam edeyim” diyorsun.
         // Beklemek = thread’i bloklamak değil. Metot o noktada kontrolü runtime’a bırakıyor; iş bitince devam ediyor.
         // Sonucu metot içinde kullanabildiğin için Ok(data) gibi bir cevap üretebiliyorsun.
-        [HttpGet("content")]
-        public Task<string> GetContent()
+        private Task<string> GetContent()
         {
             return new HttpClient().GetStringAsync("http://google.com");
         }
         // özet
         // await kullanırsan metot iş bitene kadar asenkron biçimde durup sonucu burada işleyerek döner; await kullanmazsan metot beklemeden sadece devam eden işin Task’ını döner ve sonucu/hatasını çağıran taraf iş bitince alır.
+
+        [HttpGet("content")]
+        public async Task<IActionResult> GetContentAsync2()
+        {
+            //GetContent() → Task<string> döndürür (henüz sonuç değil, “sonuç gelecek” demek)
+            // await ile Task tamamlanana kadar asenkron bekleyip content değişkenine gerçek string’i alırsın.
+            var content = await GetContent();
+            return Ok(content);
+        }
     }
 }
