@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TaskApp.ConsoleApp
 {
-    class Program
+    class ContinueWith
     {
         static async Task Main()
         {

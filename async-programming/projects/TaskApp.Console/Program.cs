@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-System.Console.WriteLine("task.WhenAll");
-//Task.WhenAll, bir dizi (koleksiyon) Task nesnesini girdi olarak alır ve bu görevlerin hepsinin tamamlanmasını bekleyen tek bir görev (Task) döndürür.
+System.Console.WriteLine("task.WhenAny");
+//Task.WhenAny, kendisine verilen görev (Task) listesinden herhangi birinin tamamlanmasını bekleyen tek bir görev (Task) döndürür.
 
-//Basitçe ifade etmek gerekirse: "Bu listedeki tüm işler bitmeden bir sonraki adıma geçme."
-
+//Basitçe ifade etmek gerekirse: "Bu listedeki işlerden hangisi önce biterse, onunla ilgilen ve hemen devam et."
 
 System.Console.WriteLine("Main Thread: " + Thread.CurrentThread.ManagedThreadId);
 
@@ -22,12 +21,8 @@ urls.ForEach(x =>
     taskList.Add(GetContentAsync(x));
 });
 
-var contents = await Task.WhenAll(taskList);
-
-contents.ToList().ForEach(c =>
-{
-    System.Console.WriteLine($"Url: {c.Website} Length: {c.Length}");
-});
+var firstData = await Task.WhenAny(taskList);
+System.Console.WriteLine($"Url: {firstData.Result.Website} Length: {firstData.Result.Length}");
 
 static async Task<Content> GetContentAsync(string url)
 {
@@ -39,10 +34,4 @@ static async Task<Content> GetContentAsync(string url)
     };
     System.Console.WriteLine("Güncel Thread: " + Thread.CurrentThread.ManagedThreadId);
     return c;
-}
-
-class Content
-{
-    public string Website { get; set; } = string.Empty;
-    public int Length { get; set; }
 }
