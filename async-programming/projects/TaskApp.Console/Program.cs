@@ -1,13 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-System.Console.WriteLine("task.WaitAll");
-//Task.WaitAll, kendisine verilen bir dizi Task nesnesini girdi olarak alır ve bu görevlerin hepsinin tamamlanmasını bekler.
+System.Console.WriteLine("task.WaitAny");
+//Task.WaitAny, kendisine verilen bir dizi Task nesnesini girdi olarak alır ve bu görevlerden herhangi birinin tamamlanmasını bekler.
 
-//En kritik farkı: WaitAll, çağrıldığı iş parçacığını (thread) görevler tamamlanana kadar dondurur (blocklar).
+//Görevlerden biri tamamlandığında, WaitAny çağrısı hemen geri döner, ancak çağrıyı yapan iş parçacığı o ana kadar bloke edilmiş olur.
 
-//await Task.WhenAll(...): İş parçacığını serbest bırakır (non-blocking). Uygulamanın yanıt verebilirliği korunur.
-
-//Task.WaitAll(...): İş parçacığını kilitler (blocking). İşlem bitene kadar iş parçacığı hiçbir şey yapamaz.
+//WaitAny metodu, tamamlanan görevin kendisini değil, tamamlanan görev listesindeki indeksini (sıra numarasını) döndürür.
 
 System.Console.WriteLine("Main Thread: " + Thread.CurrentThread.ManagedThreadId);
 
@@ -25,18 +23,16 @@ urls.ForEach(x =>
     taskList.Add(GetContentAsync(x));
 });
 
-System.Console.WriteLine("waitall'dan önce");
+System.Console.WriteLine("waitany'dan önce");
 
-Task.WaitAll(taskList);
+var firstTaskIndex = Task.WaitAny(taskList.ToArray());
 
-//timeout'lu kullanımı
-// bool tamamMi = Task.WaitAll(taskList.ToArray(), timeout: TimeSpan.FromSeconds(3));
-// System.Console.WriteLine("3 saniyede geldi mi? "+ tamamMi);
+//timeout'lu kullanımıda mevcuttur.
 
-System.Console.WriteLine("waitall'dan sonra");
+System.Console.WriteLine("waitany'dan sonra");
 
-var randomData = taskList.FirstOrDefault();
-System.Console.WriteLine($"Url: {randomData.Result.Website} Length: {randomData.Result.Length}");
+var firstData = taskList[firstTaskIndex];
+System.Console.WriteLine($"Url: {firstData.Result.Website} Length: {firstData.Result.Length}");
 
 
 static async Task<Content> GetContentAsync(string url)

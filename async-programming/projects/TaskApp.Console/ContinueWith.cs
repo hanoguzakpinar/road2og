@@ -27,7 +27,7 @@ namespace TaskApp.ConsoleApp
         static void print(Task<string> task)
         {
             //task Task<string> türünde olduğu için sonuç data.Result propertysinden alınır
-            Console.WriteLine($"uzunluk: {task.Result.Length}");
+            System.Console.WriteLine($"uzunluk: {task.Result.Length}");
         }
     }
 }
