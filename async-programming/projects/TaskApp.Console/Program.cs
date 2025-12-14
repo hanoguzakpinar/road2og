@@ -1,16 +1,20 @@
 ﻿using System.Threading.Tasks;
 
-System.Console.WriteLine("task.WhenAny");
-//Task.WhenAny, kendisine verilen görev (Task) listesinden herhangi birinin tamamlanmasını bekleyen tek bir görev (Task) döndürür.
+System.Console.WriteLine("task.WaitAll");
+//Task.WaitAll, kendisine verilen bir dizi Task nesnesini girdi olarak alır ve bu görevlerin hepsinin tamamlanmasını bekler.
 
-//Basitçe ifade etmek gerekirse: "Bu listedeki işlerden hangisi önce biterse, onunla ilgilen ve hemen devam et."
+//En kritik farkı: WaitAll, çağrıldığı iş parçacığını (thread) görevler tamamlanana kadar dondurur (blocklar).
+
+//await Task.WhenAll(...): İş parçacığını serbest bırakır (non-blocking). Uygulamanın yanıt verebilirliği korunur.
+
+//Task.WaitAll(...): İş parçacığını kilitler (blocking). İşlem bitene kadar iş parçacığı hiçbir şey yapamaz.
 
 System.Console.WriteLine("Main Thread: " + Thread.CurrentThread.ManagedThreadId);
 
 List<string> urls = new List<string>
 {
-    "https://www.google.com/",
     "https://www.github.com/",
+    "https://www.google.com/",
     "https://www.microsoft.com/"
 };
 
@@ -21,8 +25,19 @@ urls.ForEach(x =>
     taskList.Add(GetContentAsync(x));
 });
 
-var firstData = await Task.WhenAny(taskList);
-System.Console.WriteLine($"Url: {firstData.Result.Website} Length: {firstData.Result.Length}");
+System.Console.WriteLine("waitall'dan önce");
+
+Task.WaitAll(taskList);
+
+//timeout'lu kullanımı
+// bool tamamMi = Task.WaitAll(taskList.ToArray(), timeout: TimeSpan.FromSeconds(3));
+// System.Console.WriteLine("3 saniyede geldi mi? "+ tamamMi);
+
+System.Console.WriteLine("waitall'dan sonra");
+
+var randomData = taskList.FirstOrDefault();
+System.Console.WriteLine($"Url: {randomData.Result.Website} Length: {randomData.Result.Length}");
+
 
 static async Task<Content> GetContentAsync(string url)
 {
