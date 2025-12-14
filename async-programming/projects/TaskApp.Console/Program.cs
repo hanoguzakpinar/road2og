@@ -1,18 +1,48 @@
-﻿System.Console.WriteLine("task.ContinueWith");
+﻿using System.Threading.Tasks;
 
-// var task = new HttpClient().GetStringAsync("https://www.google.com").ContinueWith((data) =>
-// {//data Task<string> türünde olduğu için sonuç data.Result propertysinden alınır
-//     Console.WriteLine($"uzunluk: {data.Result.Length}");
-// });
+System.Console.WriteLine("task.WhenAll");
+//Task.WhenAll, bir dizi (koleksiyon) Task nesnesini girdi olarak alır ve bu görevlerin hepsinin tamamlanmasını bekleyen tek bir görev (Task) döndürür.
 
-var task = new HttpClient().GetStringAsync("https://www.google.com").ContinueWith(print);
+//Basitçe ifade etmek gerekirse: "Bu listedeki tüm işler bitmeden bir sonraki adıma geçme."
 
-System.Console.WriteLine("arada yapılacak işler");
 
-await task;
+System.Console.WriteLine("Main Thread: " + Thread.CurrentThread.ManagedThreadId);
 
-static void print(Task<string> task)
+List<string> urls = new List<string>
 {
-    //task Task<string> türünde olduğu için sonuç data.Result propertysinden alınır
-    Console.WriteLine($"uzunluk: {task.Result.Length}");
+    "https://www.google.com/",
+    "https://www.github.com/",
+    "https://www.microsoft.com/"
+};
+
+List<Task<Content>> taskList = new List<Task<Content>>();
+
+urls.ForEach(x =>
+{
+    taskList.Add(GetContentAsync(x));
+});
+
+var contents = await Task.WhenAll(taskList);
+
+contents.ToList().ForEach(c =>
+{
+    System.Console.WriteLine($"Url: {c.Website} Length: {c.Length}");
+});
+
+static async Task<Content> GetContentAsync(string url)
+{
+    var data = await new HttpClient().GetStringAsync(url);
+    Content c = new Content
+    {
+        Website = url,
+        Length = data.Length
+    };
+    System.Console.WriteLine("Güncel Thread: " + Thread.CurrentThread.ManagedThreadId);
+    return c;
+}
+
+class Content
+{
+    public string Website { get; set; } = string.Empty;
+    public int Length { get; set; }
 }
