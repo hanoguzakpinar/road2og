@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using TaskApp.Console;
 
 namespace TaskApp.ConsoleApp
 {
@@ -32,7 +33,7 @@ namespace TaskApp.ConsoleApp
 
             urls.ForEach(x =>
             {
-                taskList.Add(GetContentAsync(x));
+                taskList.Add(TaskHelper.GetContentAsync(x));
             });
 
             var contents = await Task.WhenAll(taskList);
@@ -41,18 +42,6 @@ namespace TaskApp.ConsoleApp
             {
                 System.Console.WriteLine($"Url: {c.Website} Length: {c.Length}");
             });
-        }
-
-        static async Task<Content> GetContentAsync(string url)
-        {
-            var data = await httpClient.GetStringAsync(url);
-            Content c = new Content
-            {
-                Website = url,
-                Length = data.Length
-            };
-            System.Console.WriteLine("Güncel Thread: " + Thread.CurrentThread.ManagedThreadId);
-            return c;
         }
     }
 }

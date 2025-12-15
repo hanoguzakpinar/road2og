@@ -33,7 +33,7 @@ namespace TaskApp.Console
 
             urls.ForEach(x =>
             {
-                taskList.Add(GetContentAsync(x));
+                taskList.Add(TaskHelper.GetContentAsync(x));
             });
 
             System.Console.WriteLine("waitall'dan önce");
@@ -49,18 +49,6 @@ namespace TaskApp.Console
 
             var randomData = taskList.FirstOrDefault();
             System.Console.WriteLine($"Url: {randomData.Result.Website} Length: {randomData.Result.Length}");
-        }
-
-        static async Task<Content> GetContentAsync(string url)
-        {
-            var data = await new HttpClient().GetStringAsync(url);
-            Content c = new Content
-            {
-                Website = url,
-                Length = data.Length
-            };
-            System.Console.WriteLine("Güncel Thread: " + Thread.CurrentThread.ManagedThreadId);
-            return c;
         }
     }
 }

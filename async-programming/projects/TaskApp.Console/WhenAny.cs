@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using TaskApp.Console;
 
 class WhenAny
 {
@@ -26,22 +27,10 @@ class WhenAny
 
         urls.ForEach(x =>
         {
-            taskList.Add(GetContentAsync(x));
+            taskList.Add(TaskHelper.GetContentAsync(x));
         });
 
         var firstData = await Task.WhenAny(taskList);
         Console.WriteLine($"Url: {firstData.Result.Website} Length: {firstData.Result.Length}");
-    }
-
-    static async Task<Content> GetContentAsync(string url)
-    {
-        var data = await new HttpClient().GetStringAsync(url);
-        Content c = new Content
-        {
-            Website = url,
-            Length = data.Length
-        };
-        Console.WriteLine("Güncel Thread: " + Thread.CurrentThread.ManagedThreadId);
-        return c;
     }
 }
