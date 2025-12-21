@@ -1,42 +1,28 @@
-﻿using System.Threading.Tasks;
-
-System.Console.WriteLine("task.Result");
-//task.Result özelliği, asenkron bir görevin (Task) ürettiği nihai sonuca erişmek için kullanılır. Eğer metodunuz Task<T> dönüyorsa, buradaki T tipindeki gerçek veriyi Result ile çekersiniz.
-
-//Senkron (Blocking): Görevi beklerken mevcut iş parçacığını kilitler.
-
-//await modern asenkron uygulamalarda yanıt verebilirliği korumak için, .Result ise yalnızca asenkron desteği olmayan eski/zorunlu senkron yapılarda sonucu zorla almak için kullanılır.
-
-//Metot imzası void ise ve asenkron yapıya çevrilemiyorsa "son çare" olarak.
-
-System.Console.WriteLine(GetData());
-
-static string GetData()
+﻿var myTask = Task.Run(() =>
 {
-    var task = new HttpClient().GetStringAsync("https://google.com");
+    System.Console.WriteLine("myTask çalıştı.");
+});
 
-    var data = task.Result;
+await myTask;
 
-    return data;
-    // bu kullanımda thread bloklar.
-}
+// Görevin yürütülmesinin bittiğini gösterir. Görev başarılı, hatalı veya iptal edilmiş olsa bile bu değer true döner.
+System.Console.WriteLine(myTask.IsCompleted);
 
-static async Task<string> GetData2()
-{
-    var task = new HttpClient().GetStringAsync("https://google.com");
+//Görevin bir CancellationToken aracılığıyla veya manuel olarak iptal edilerek sonlandığını belirtir.
+System.Console.WriteLine(myTask.IsCanceled);
 
-    await task;
+//Görevin yürütülmesi sırasında işlenmemiş bir hata (exception) oluştuğunu gösterir.
+System.Console.WriteLine(myTask.IsFaulted);
 
-    return task.Result;
-    // bu kullanımda thread bloklamaz.
-}
+//Görevin yaşam döngüsündeki tam aşamasını verir. (Running, WaitingForActivation, RanToCompletion, vb.)
+//Eğer bir görevin hiçbir hata almadan ve iptal edilmeden, tam olarak başarıyla bittiğinden emin olmak istiyorsanız, Status özelliğini şu şekilde kontrol edebilirsiniz: if (myTask.Status == TaskStatus.RanToCompletion) { ... }
+System.Console.WriteLine(myTask.Status);
 
-static async Task<string> GetData3()
-{
-    var task = new HttpClient().GetStringAsync("https://google.com").ContinueWith((data) =>
-    {
-        //GetStringAsync metodundan sonuç geldi, o metot bittiği için bu kullanımda thread bloklamaz.
-        return data.Result;
-    });
-    return string.Empty;
-}
+//(Sadece Task<T> için) Görev bittiğinde döndürdüğü veriyi verir. Görev bitmemişse, bitene kadar mevcut thread'i bloklar.
+//myTask.Result
+
+//Görev başlatılırken (StartNew gibi metotlarla) içine konulan opsiyonel durum nesnesidir.
+//AsyncState
+
+//Bir görevin hiçbir hata almadan veya iptal edilmeden, tam bir başarıyla sonuçlanıp sonuçlanmadığını tek bir bool değerle bildiren özelliktir.
+System.Console.WriteLine(myTask.IsCompletedSuccessfully);
