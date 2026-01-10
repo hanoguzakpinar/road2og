@@ -17,15 +17,21 @@ var channel = await connection.CreateChannelAsync();
 //publisher tarafında ve consumer tarafında aynı parametreler ile kuyruk oluşturulmalıdır. yoksa uygulama hata verir.
 //await channel.QueueDeclareAsync("hello-queue", true, false, false);
 
+await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false);
+
 var consumer = new AsyncEventingBasicConsumer(channel);
 
-await channel.BasicConsumeAsync("hello-queue", autoAck: true, consumer);
+await channel.BasicConsumeAsync("work-queue", autoAck: false, consumer);
 
 consumer.ReceivedAsync += async (sender, ea) =>
 {
     var msg = Encoding.UTF8.GetString(ea.Body.ToArray());
 
     System.Console.WriteLine($"Gelen Mesaj: {msg}");
+
+    await channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
+
+    Thread.Sleep(1500);
 };
 
 
