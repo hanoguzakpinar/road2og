@@ -19,7 +19,6 @@ var channel = await connection.CreateChannelAsync();
 
 var consumer = new AsyncEventingBasicConsumer(channel);
 
-//autoAck = Mesaj tüketiciye ulaştığı anda, tüketici tarafındaki işlemin bitmesi veya hata alması beklenmeden mesajın başarılı sayılmasını ve kuyruktan hemen silinmesini sağlar.
 await channel.BasicConsumeAsync("hello-queue", autoAck: true, consumer);
 
 consumer.ReceivedAsync += async (sender, ea) =>

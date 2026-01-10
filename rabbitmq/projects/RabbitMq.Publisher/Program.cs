@@ -10,10 +10,7 @@ using var connection = await factory.CreateConnectionAsync();
 
 var channel = await connection.CreateChannelAsync();
 
-// durable = RabbitMQ sunucusu yeniden başlatılsa (restart) bile kuyruğun veya exchange'in kaybolmayıp fiziksel olarak diskte saklanmasını sağlar.
-// exclusive = Kuyruğun sadece onu oluşturan bağlantı (connection) tarafından kullanılabilmesini ve o bağlantı kapandığında kuyruğun otomatik olarak silinmesini sağlar.
-// autoDelete = Kuyruğu dinleyen son tüketici (consumer) aboneliğini (unsubscribe) bitirdiğinde kuyruğun otomatik olarak silinmesini sağlar.
-await channel.QueueDeclareAsync("hello-queue", true, false, false);
+await channel.QueueDeclareAsync("hello-queue", durable: true, exclusive: false, autoDelete: false);
 
 string msg = "hello world";
 var body = Encoding.UTF8.GetBytes(msg);
