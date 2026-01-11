@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using RabbitMq.Common;
 using RabbitMQ.Client;
 
 var factory = new ConnectionFactory()
@@ -10,15 +11,28 @@ using var connection = await factory.CreateConnectionAsync();
 
 var channel = await connection.CreateChannelAsync();
 
-await channel.ExchangeDeclareAsync("logs-fanout", ExchangeType.Fanout, durable: true);
+await channel.ExchangeDeclareAsync("logs-direct", ExchangeType.Direct, durable: true);
+
+Enum.GetNames(typeof(LogNames)).ToList().ForEach(async x =>
+{
+    var routingKey = $"route-{x}";
+    var queueName = $"direct-queue-{x}";
+
+    await channel.QueueDeclareAsync(queue: queueName, true, false, false);
+    await channel.QueueBindAsync(queueName, "logs-direct", routingKey);
+});
 
 Enumerable.Range(1, 50).ToList().ForEach(async x =>
 {
-    string msg = $"log {x}";
+    LogNames log = (LogNames)new Random().Next(1, 5);
+
+    string msg = $"log-type: {log} log-msg:{x}";
     var body = Encoding.UTF8.GetBytes(msg);
 
-    await channel.BasicPublishAsync(exchange: "logs-fanout", routingKey: string.Empty, basicProperties: new BasicProperties(), body: body, mandatory: false);
-    System.Console.WriteLine($"Mesaj gönderilmiştir : {x}");
+    var routingKey = $"route-{log}";
+
+    await channel.BasicPublishAsync(exchange: "logs-direct", routingKey: routingKey, basicProperties: new BasicProperties(), body: body, mandatory: false);
+    System.Console.WriteLine($"Log gönderilmiştir : {log}");
 });
 
 Console.ReadLine();

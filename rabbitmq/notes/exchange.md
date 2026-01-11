@@ -12,3 +12,13 @@ Producer'dan gelen bir mesajı, üzerinde herhangi bir filtreleme yapmadan (Rout
 - **Routing Key Yok Sayılır:** Producer mesajı gönderirken bir "adres/etiket" (routing key) belirtse bile, Fanout Exchange bunu görmezden gelir.
 - **Çoğaltma (Duplication):** Exchange, kendisine o an kaç tane kuyruk bağlıysa, mesajı hepsine tek tek kopyalar.
 - **Hız:** Herhangi bir string eşleştirmesi veya kontrolü yapmadığı için diğer exchange türlerine göre (Direct veya Topic) daha performanslıdır.
+
+# Direct Exchange
+RabbitMQ'daki "hedef odaklı" ve seçici çalışan exchange türüdür.
+
+Temel görevi filtrelemedir. Mesajın üzerindeki etikete (Routing Key) bakar ve bu etiketle birebir eşleşen (exact match) kuyruğa mesajı iletir.
+
+**Nasıl Çalışır?**
+- **Routing Key (Yönlendirme Anahtarı):** Producer mesajı gönderirken üzerine bir etiket yapıştırır. (Örneğin: kirmizi, hata, resim gibi).
+- **Binding Key (Bağlama Anahtarı):** Kuyruklar Exchange'e bağlanırken (bind edilirken) "Ben sadece şu etikete sahip mesajları istiyorum" der.
+- **Tam Eşleşme:** Exchange, gelen mesajın Routing Key'i ile kuyruğun Binding Key'ini karşılaştırır. Sadece birebir aynıysa mesajı o kuyruğa atar.
