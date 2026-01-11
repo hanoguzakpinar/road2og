@@ -57,3 +57,8 @@ Bu ayar, "Yük Dengeleme" (Load Balancing) ve "Adil Dağıtım" (Fair Dispatch) 
 **global** =
 - false: Bu limit her yeni tüketici (consumer) için ayrı ayrı uygulanır (Önerilen).
 - true: Bu limit tüm kanal (channel) genelinde paylaşılır.
+
+# ExchangeDeclareAsync
+RabbitMQ sunucusu üzerinde bir Exchange (Dağıtıcı/Santral) oluşturmak veya var olan bir exchange'in varlığını doğrulamak için kullanılan asenkron metottur. "Idempotent" yapıdadır.
+
+**type:** Exchange'in mesajı nasıl dağıtacağını bu parametre belirler.

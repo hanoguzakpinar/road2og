@@ -11,17 +11,18 @@ using var connection = await factory.CreateConnectionAsync();
 
 var channel = await connection.CreateChannelAsync();
 
-//kuyruk declare edilmezse ve bu kuyruk yoksa hata fırlatılır.
-//publisher'ın bu kuyruğu oluşturduğuna dair kesinlik varsa bu satır silinebilir.
-//zaten kuyruk varsa ve bu satır çalışırsa, hata oluşmaz.
-//publisher tarafında ve consumer tarafında aynı parametreler ile kuyruk oluşturulmalıdır. yoksa uygulama hata verir.
-//await channel.QueueDeclareAsync("hello-queue", true, false, false);
+// bu kuyruk geçicidir, consumer uygulama kapandığında kuyruk silinir.
+var randomQueueName = (await channel.QueueDeclareAsync()).QueueName;
+
+await channel.QueueBindAsync(queue: randomQueueName, exchange: "logs-fanout", routingKey: string.Empty, arguments: null);
 
 await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false);
 
 var consumer = new AsyncEventingBasicConsumer(channel);
 
-await channel.BasicConsumeAsync("work-queue", autoAck: false, consumer);
+await channel.BasicConsumeAsync(randomQueueName, autoAck: false, consumer);
+
+System.Console.WriteLine("loglar dinleniyor");
 
 consumer.ReceivedAsync += async (sender, ea) =>
 {
@@ -31,8 +32,7 @@ consumer.ReceivedAsync += async (sender, ea) =>
 
     await channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
 
-    Thread.Sleep(1500);
+    Thread.Sleep(1000);
 };
-
 
 Console.ReadLine();

@@ -10,14 +10,14 @@ using var connection = await factory.CreateConnectionAsync();
 
 var channel = await connection.CreateChannelAsync();
 
-await channel.QueueDeclareAsync("work-queue", durable: true, exclusive: false, autoDelete: false);
+await channel.ExchangeDeclareAsync("logs-fanout", ExchangeType.Fanout, durable: true);
 
 Enumerable.Range(1, 50).ToList().ForEach(async x =>
 {
-    string msg = $"Message {x}";
+    string msg = $"log {x}";
     var body = Encoding.UTF8.GetBytes(msg);
 
-    await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "work-queue", basicProperties: new BasicProperties(), body: body, mandatory: false);
+    await channel.BasicPublishAsync(exchange: "logs-fanout", routingKey: string.Empty, basicProperties: new BasicProperties(), body: body, mandatory: false);
     System.Console.WriteLine($"Mesaj gönderilmiştir : {x}");
 });
 
