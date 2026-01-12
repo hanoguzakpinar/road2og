@@ -11,22 +11,21 @@ using var connection = await factory.CreateConnectionAsync();
 
 var channel = await connection.CreateChannelAsync();
 
-await channel.ExchangeDeclareAsync("logs-topic", ExchangeType.Topic, durable: true);
+await channel.ExchangeDeclareAsync("header-exchange", ExchangeType.Headers, durable: true);
 
-Random rnd = new Random();
-Enumerable.Range(1, 50).ToList().ForEach(async x =>
+var headers = new Dictionary<string, object?>();
+headers.Add("format", "pdf");
+headers.Add("shape", "a4");
+
+var props = new BasicProperties()
 {
-    LogNames log1 = (LogNames)rnd.Next(1, 5);
-    LogNames log2 = (LogNames)rnd.Next(1, 5);
-    LogNames log3 = (LogNames)rnd.Next(1, 5);
+    Headers = headers
+};
 
-    string msg = $"log-type: {log1}.{log2}.{log3}";
-    var body = Encoding.UTF8.GetBytes(msg);
+string msg = $"header exchange msg";
+var body = Encoding.UTF8.GetBytes(msg);
 
-    var routingKey = $"{log1}.{log2}.{log3}";
-
-    await channel.BasicPublishAsync(exchange: "logs-topic", routingKey: routingKey, basicProperties: new BasicProperties(), body: body, mandatory: false);
-    System.Console.WriteLine($"Log gönderilmiştir : {msg}");
-});
+await channel.BasicPublishAsync(exchange: "header-exchange", routingKey: string.Empty, basicProperties: props, body: body, mandatory: false);
+System.Console.WriteLine($"Mesaj gönderilmiştir : {msg}");
 
 Console.ReadLine();

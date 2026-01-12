@@ -47,3 +47,24 @@ kuyrukları olsun elimizde
 - (\*.almanya.\*) -> Sadece Almanya haberlerini gönder (Kıta ve konu fark etmez).
 
 - (\*.\*.spor) -> Dünyadaki bütün spor haberlerini gönder.
+
+## Header Exchange
+Mesajları yönlendirirken klasik "Routing Key" (yönlendirme anahtarı) yerine, mesajın başlık (header) özelliklerini kullanan gelişmiş bir exchange tipidir.
+
+Diğer exchange türleri (Direct, Topic) sadece tek bir string (routingKey) üzerinden eşleştirme yaparken, Headers Exchange birden fazla anahtar-değer (key-value) çiftine bakarak çoklu kriterle filtreleme yapabilir.
+
+Bunu bir SQL Sorgusu gibi düşünebilirsin: "Formatı PDF VE Türü Rapor olanları getir."
+
+**Nasıl Çalışır?**
+- Headers Exchange kullanırken, kuyruğu exchange'e bağlarken (Binding) özel bir argüman olan x-match parametresini kullanmak zorundasın. İki modu vardır:
+- x-match: all (AND Mantığı): Kuyruğun istediği tüm header değerleri mesajda birebir olmalıdır.
+- x-match: any (OR Mantığı): Kuyruğun istediği header değerlerinden en az biri mesajda varsa eşleşme sağlanır.
+
+# Özet
+| Exchange Türü | Çalışma Mantığı | Routing Key Kullanımı | Performans | En İyi Kullanım Senaryosu |
+| :--- | :--- | :--- | :--- | :--- |
+| **Direct** | **Tam Eşleşme** (Exact Match) | Zorunlu. Mesajdaki anahtar ile kuyruğun bağlandığı anahtar birebir aynı olmalıdır. | Çok Hızlı | Belirli bir mesajı, doğrudan ilgili tüketiciye göndermek için. <br>*(Örn: `create_pdf` sadece PDF servisine gider.)* |
+| **Fanout** | **Yayın** (Broadcast) | Önemsiz. Routing Key ne olursa olsun bağlı olan **tüm** kuyruklara kopyalar. | En Hızlı | Bir olayı tüm sistemlere aynı anda duyurmak. <br>*(Örn: Canlı spor skoru.)* |
+| **Topic** | **Desen Eşleşmesi** (Pattern Match) | Zorunlu. `.` ile ayrılmış kelimeler ve joker karakterler (`*`, `#`) kullanılır. | Orta | Hiyerarşik loglama veya karmaşık dağıtım. <br>*(Örn: `logs.error.*` sadece hataları al.)* |
+| **Headers** | **Özellik Filtreleme** (Metadata) | Kullanılmaz. Mesajın `headers` özelliklerindeki Key-Value değerlerine bakar. | En Yavaş | Routing Key'in yetmediği, çok kriterli karmaşık sorgular. <br>*(Örn: `format=json` VE `speed=fast`)* |
+| **Default** | **Gizli Direct** | Kuyruk isminin kendisi Routing Key olarak kabul edilir. | Çok Hızlı | Basit kuyruk yapıları. Exchange tanımlamadan doğrudan kuyruğa atıyormuş gibi davranır. |
