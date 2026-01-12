@@ -15,7 +15,11 @@ await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false);
 
 var consumer = new AsyncEventingBasicConsumer(channel);
 
-await channel.BasicConsumeAsync("direct-queue-Warning", autoAck: false, consumer);
+var queueName = (await channel.QueueDeclareAsync()).QueueName;
+var routingKey = "*.Error.*";
+await channel.QueueBindAsync(queueName, "logs-topic", routingKey);
+
+await channel.BasicConsumeAsync(queueName, autoAck: false, consumer);
 
 System.Console.WriteLine("loglar dinleniyor");
 
