@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMq.Subscriber", "Rabb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMq.Common", "RabbitMq.Common\RabbitMq.Common.csproj", "{476E653B-FEE9-4132-BA7A-218D8AC9EB49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMq.Watermark.Web", "RabbitMq.Watermark.Web\RabbitMq.Watermark.Web.csproj", "{D394D410-9486-4F95-B34D-C1FB122D3DF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{476E653B-FEE9-4132-BA7A-218D8AC9EB49}.Release|x64.Build.0 = Release|Any CPU
 		{476E653B-FEE9-4132-BA7A-218D8AC9EB49}.Release|x86.ActiveCfg = Release|Any CPU
 		{476E653B-FEE9-4132-BA7A-218D8AC9EB49}.Release|x86.Build.0 = Release|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Debug|x64.Build.0 = Debug|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Debug|x86.Build.0 = Debug|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Release|x64.ActiveCfg = Release|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Release|x64.Build.0 = Release|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Release|x86.ActiveCfg = Release|Any CPU
+		{D394D410-9486-4F95-B34D-C1FB122D3DF0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
