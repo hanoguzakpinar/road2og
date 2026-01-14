@@ -19,7 +19,8 @@ headers.Add("shape", "a4");
 
 var props = new BasicProperties()
 {
-    Headers = headers
+    Headers = headers,
+    Persistent = true // mesajları kalıcı hale getirme
 };
 
 string msg = $"header exchange msg";
