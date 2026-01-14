@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using RabbitMq.Common;
 using RabbitMQ.Client;
 
@@ -23,10 +24,11 @@ var props = new BasicProperties()
     Persistent = true // mesajları kalıcı hale getirme
 };
 
-string msg = $"header exchange msg";
-var body = Encoding.UTF8.GetBytes(msg);
+var product = new Product { Id = 1, Name = "Kitap", Price = 150, Stock = 100 };
+
+var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(product));
 
 await channel.BasicPublishAsync(exchange: "header-exchange", routingKey: string.Empty, basicProperties: props, body: body, mandatory: false);
-System.Console.WriteLine($"Mesaj gönderilmiştir : {msg}");
+System.Console.WriteLine($"Nesne gönderilmiştir : {product.Id}");
 
 Console.ReadLine();

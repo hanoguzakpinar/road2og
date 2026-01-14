@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using System.Text.Json;
+using RabbitMq.Common;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -34,7 +36,9 @@ consumer.ReceivedAsync += async (sender, ea) =>
 {
     var msg = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-    System.Console.WriteLine($"Gelen Mesaj: {msg}");
+    var product = JsonSerializer.Deserialize<Product>(msg);
+
+    System.Console.WriteLine($"Gelen Nesne: {product.Id} {product.Name}");
 
     await channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
 
