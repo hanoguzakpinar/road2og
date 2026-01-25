@@ -6,16 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RabbitMq.Watermark.Web.Models;
+using RabbitMq.Watermark.Web.Services;
 
 namespace RabbitMq.Watermark.Web.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly RabbitMQPublisher _publisher;
 
-        public ProductsController(AppDbContext context)
+        public ProductsController(AppDbContext context, RabbitMQPublisher publisher)
         {
             _context = context;
+            _publisher = publisher;
         }
 
         // GET: Products
@@ -53,15 +56,30 @@ namespace RabbitMq.Watermark.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,PictureUrl")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,ImageName")] Product product, IFormFile imageFile)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(product);
+
+            if (imageFile is { Length: > 0 })
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //Path.GetExtension dosyanın uzantısını verir
+                var name = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", name);
+
+                await using FileStream stream = new(path, FileMode.Create);
+                await imageFile.CopyToAsync(stream);
+
+                await _publisher.PublishAsync(new ProductImageCreatedEvent()
+                {
+                    ImageName = name
+                });
+
+                product.ImageName = name;
             }
-            return View(product);
+
+            _context.Add(product);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
@@ -85,7 +103,7 @@ namespace RabbitMq.Watermark.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Stock,PictureUrl")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Stock,ImageName")] Product product)
         {
             if (id != product.Id)
             {
