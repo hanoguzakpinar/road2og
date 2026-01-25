@@ -34,6 +34,10 @@ Bir mesajı RabbitMQ sunucusuna (Exchange'e) göndermek için kullanılan asenkr
 
 **body** = Gönderilecek verinin kendisi (Byte dizisi formatında).
 
+**mandatory** = 
+- false: Mesajı bir Exchange'e gönderirsiniz. Eğer mesajın routing_key değeri hiçbir kuyrukla eşleşmiyorsa, RabbitMQ mesajı sessizce siler. Gönderici (Publisher) mesajın iletilmediğinden haberdar olmaz.
+- true: Eğer mesaj hiçbir kuyruğa ulaşamazsa, RabbitMQ mesajı göndericiye bir BasicReturn olayı (event) ile geri iade eder. Böylece kodunuzda mesajın hedefe ulaşmadığını anlayıp loglama yapabilir veya tekrar deneyebilirsiniz.
+
 # BasicAckAsync
 Bir mesajın tüketici (consumer) tarafından başarıyla işlendiğini ve artık kuyruktan silinebileceğini manuel olarak bildirmek için kullanılır.
 

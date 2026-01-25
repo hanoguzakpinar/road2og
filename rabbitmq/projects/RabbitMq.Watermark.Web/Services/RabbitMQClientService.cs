@@ -18,10 +18,9 @@ public class RabbitMQClientService : IAsyncDisposable
     {
         _connectionFactory = connectionFactory;
         _logger = logger;
-        Connect();
     }
 
-    public async Task<IChannel> Connect()
+    public async Task<IChannel> ConnectAsync()
     {
         _connection = await _connectionFactory.CreateConnectionAsync();
 
