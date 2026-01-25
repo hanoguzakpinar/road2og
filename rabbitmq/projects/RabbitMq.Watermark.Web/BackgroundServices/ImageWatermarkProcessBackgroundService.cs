@@ -22,6 +22,7 @@ public class ImageWatermarkProcessBackgroundService : BackgroundService
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("bg-service başladı");
         _channel = await _rabbit.ConnectAsync();
         await _channel.BasicQosAsync(0, 1, false);
     }
