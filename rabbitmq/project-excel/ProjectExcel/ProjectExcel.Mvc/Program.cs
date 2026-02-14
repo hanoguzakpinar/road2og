@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
-	opt.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+	opt.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
@@ -34,12 +34,12 @@ using (var scope = app.Services.CreateScope())
 		{
 			UserName = "admin",
 			Email = "admin@gmail.com"
-		}, "password").Wait();
+		}, "Password*5").Wait();
 		userManager.CreateAsync(new IdentityUser
 		{
 			UserName = "deneme",
 			Email = "deneme@gmail.com"
-		}, "password").Wait();
+		}, "Password*5").Wait();
 	}
 }
 
