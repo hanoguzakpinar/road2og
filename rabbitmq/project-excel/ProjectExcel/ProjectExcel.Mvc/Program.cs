@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
-	opt.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+	opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
