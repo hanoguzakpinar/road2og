@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="ProjectExcel.Mvc/ProjectExcel.Mvc.csproj" />
+  <Project Path="Shared/Shared.csproj" Id="7225c0cd-43a1-4bab-aca4-6a565988132f" />
 </Solution>
