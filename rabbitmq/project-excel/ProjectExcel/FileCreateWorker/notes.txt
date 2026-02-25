@@ -1,0 +1,4 @@
+
+-- db first
+
+Scaffold-DbContext "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AdventureWorksLT2019;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Tables SalesLT.Product
