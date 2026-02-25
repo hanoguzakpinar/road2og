@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="FileCreateWorker/FileCreateWorker.csproj" Id="d09a3310-d061-41f8-8f52-9157cf9d0378" />
   <Project Path="ProjectExcel.Mvc/ProjectExcel.Mvc.csproj" />
   <Project Path="Shared/Shared.csproj" Id="7225c0cd-43a1-4bab-aca4-6a565988132f" />
 </Solution>
