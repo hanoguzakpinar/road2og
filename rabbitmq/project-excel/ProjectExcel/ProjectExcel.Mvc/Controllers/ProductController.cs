@@ -44,7 +44,6 @@ namespace ProjectExcel.Mvc.Controllers
 
             await _publisher.PublishAsync(new Shared.CreateExcelMessage()
             {
-                UserId = userFile.UserId,
                 FileId = userFile.Id.ToString()
             });
 
