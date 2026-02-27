@@ -16,6 +16,12 @@ namespace ProjectExcel.Mvc.Controllers
 			_context = context;
 		}
 
+		[HttpGet]
+		public IActionResult Get()
+		{
+			return Ok("Devamke");
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> Upload(IFormFile file, int fileId)
 		{

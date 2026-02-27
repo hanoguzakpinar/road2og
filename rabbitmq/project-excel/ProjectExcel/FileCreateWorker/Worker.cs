@@ -38,7 +38,12 @@ namespace FileCreateWorker
 			_logger.LogInformation($"Connection açıldı.");
 
 			await base.StartAsync(cancellationToken);
-		}
+
+			while(!cancellationToken.IsCancellationRequested)
+			{
+				await Task.Delay(1000, cancellationToken);
+            }
+        }
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			var consumer = new AsyncEventingBasicConsumer(_channel);
@@ -54,6 +59,8 @@ namespace FileCreateWorker
 
 			var request = JsonSerializer.Deserialize<CreateExcelMessage>(Encoding.UTF8.GetString(@event.Body.ToArray()));
 
+            Console.WriteLine(Encoding.UTF8.GetString(@event.Body.ToArray()));
+
 			using var ms = new MemoryStream();
 
 			var wb = new XLWorkbook();
@@ -67,7 +74,7 @@ namespace FileCreateWorker
 			MultipartFormDataContent multipartFormDataContent = new();
 			multipartFormDataContent.Add(new ByteArrayContent(ms.ToArray()), "file", Guid.NewGuid().ToString() + ".xlsx");
 
-			var baseUrl = "http://localhost:44379/api/files";
+			var baseUrl = "https://localhost:7294/api/files";
 
 			using (var httpClient = new HttpClient())
 			{
