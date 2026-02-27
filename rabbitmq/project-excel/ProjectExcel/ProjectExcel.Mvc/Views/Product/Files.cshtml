@@ -9,6 +9,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
+            <th>Id</th>
             <th>File Name</th>
             <th>Created Date</th>
             <th>File Status</th>
@@ -18,8 +19,9 @@
     @foreach (var file in Model)
     {
         <tr>
+            <td>@file.Id</td>
             <td>@file.FileName</td>
-            <td>@file.GetCreatedDate</td>
+            <td>@file.CreatedDate</td>
             <td>@file.FileStatus</td>
             <td>
                 <a class="btn btn-primary @(file.FileStatus == FileStatus.Creating ? "disabled" : "")"
