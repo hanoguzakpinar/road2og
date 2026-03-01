@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ProjectExcel.Mvc.Hubs;
 using ProjectExcel.Mvc.Models;
 using ProjectExcel.Mvc.Services;
 using RabbitMQ.Client;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
@@ -76,5 +78,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapHub<MyHub>("/myhub");
 
 app.Run();
