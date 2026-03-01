@@ -74,7 +74,7 @@ namespace FileCreateWorker
 			MultipartFormDataContent multipartFormDataContent = new();
 			multipartFormDataContent.Add(new ByteArrayContent(ms.ToArray()), "file", Guid.NewGuid().ToString() + ".xlsx");
 
-			var baseUrl = "https://localhost:7294/api/files";
+			var baseUrl = "http://localhost:5164/api/files";
 
 			using (var httpClient = new HttpClient())
 			{
