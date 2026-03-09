@@ -1,23 +1,35 @@
-# Base image olarak .NET 10 SDK'yı kullan (derleme ve yayınlama araçlarını içerir)
-FROM mcr.microsoft.com/dotnet/sdk:10.0
+﻿# ── AŞAMA 1: BUILD ──────────────────────────────────────────────
+# .NET 10 SDK imajını "build" adlı aşama olarak başlat
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
-# Container içinde çalışma dizinini /app olarak ayarla (yoksa oluşturur)
 WORKDIR /app
 
-# Host makinedeki tüm proje dosyalarını container'ın /app dizinine kopyala
-COPY . .
-
-# Proje bağımlılıklarını (NuGet paketleri) indir ve yükle
+# Önce yalnızca .csproj dosyasını kopyala; bağımlılıklar değişmediğinde
+# Docker bu katmanı önbellekten kullanır, restore tekrar çalışmaz
+COPY *.csproj .
 RUN dotnet restore
 
-# Uygulamayı Release modunda derleyip /app/out klasörüne yayınla
+# Kaynak kodun tamamını container'a kopyala
+COPY . .
+
+# Uygulamayı Release modunda derle, çıktıyı /app/out'a yayınla
 RUN dotnet publish DockerMvc.csproj -c Release -o out
 
-# Çalışma dizinini yayınlanan çıktı klasörüne (/app/out) geçir
-WORKDIR /app/out
 
-# Uygulamanın dinleyeceği URL ve portu ortam değişkeni ile belirt
+# ── AŞAMA 2: RUNTIME ────────────────────────────────────────────
+# ASP.NET Core runtime imajını başlat (Razor Pages için zorunlu)
+# dotnet/runtime değil dotnet/aspnet kullanılmalı;
+# dotnet/runtime yalnızca temel .NET çalışma zamanını içerir,
+# Microsoft.AspNetCore.App framework'ünü içermez.
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+
+WORKDIR /app
+
+# Build aşamasında üretilen dosyaları bu aşamaya kopyala
+COPY --from=build /app/out .
+
+# Tüm ağ arayüzlerinde 4500 portunu dinle
 ENV ASPNETCORE_URLS="http://*:4500"
 
-# Container başladığında çalıştırılacak komut: uygulamayı dotnet ile başlat
+# Container başlatıldığında uygulamayı çalıştır
 ENTRYPOINT ["dotnet", "DockerMvc.dll"]
