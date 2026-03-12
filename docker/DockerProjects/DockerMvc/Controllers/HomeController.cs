@@ -21,4 +21,26 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    public IActionResult ImageSave()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ImageSave(IFormFile file)
+    {
+        if (file is { Length: > 0 })
+        {
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+        }
+        return View();
+    }
 }
