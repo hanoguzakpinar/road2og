@@ -1,6 +1,12 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.Extensions.FileProviders;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
+builder.Services.AddSingleton<IFileProvider>(fileProvider);
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

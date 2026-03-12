@@ -1,11 +1,19 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using DockerMvc.Models;
+using Microsoft.Extensions.FileProviders;
 
 namespace DockerMvc.Controllers;
 
 public class HomeController : Controller
 {
+    private readonly IFileProvider _fileProvider;
+
+    public HomeController(IFileProvider fileProvider)
+    {
+        _fileProvider = fileProvider;
+    }
+
     public IActionResult Index()
     {
         return View();
@@ -42,5 +50,20 @@ public class HomeController : Controller
             }
         }
         return View();
+    }
+
+    public IActionResult ImageShow()
+    {
+        var images = _fileProvider.GetDirectoryContents("wwwroot/images").ToList().Select(x => x.Name);
+        return View(images);
+    }
+    [HttpPost]
+    public async Task<IActionResult> ImageShow(string imageId)
+    {
+        var file = _fileProvider.GetDirectoryContents("wwwroot/images").ToList().FirstOrDefault(x => x.Name == imageId);
+
+        System.IO.File.Delete(file.PhysicalPath);
+
+        return RedirectToAction("ImageShow");
     }
 }
